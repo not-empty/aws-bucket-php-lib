@@ -66,6 +66,84 @@ class AwsBucketHelperTest extends TestCase
     }
 
     /**
+     * @covers AwsBucket\AwsBucket::putFileOnPath
+     */
+    public function testPutFileOnPath()
+    {
+        $result = [
+            'ObjectURL' => 'https://url/file.ext',
+        ];
+
+        $sqsClientMock = Mockery::mock(S3Client::class);
+        $sqsClientMock->shouldReceive('putObject')
+            ->once()
+            ->withAnyArgs()
+            ->andReturnSelf();
+
+        $sqsClientMock->shouldReceive('toArray')
+            ->once()
+            ->withAnyArgs()
+            ->andReturn($result)
+            ->getMock();
+
+        $awsBucketPartialMock = Mockery::mock(AwsBucket::class)
+            ->makePartial();
+
+        $awsBucketPartialMock->shouldReceive('newS3Client')
+            ->once()
+            ->andReturn($sqsClientMock);
+
+        $content = 'this is your file content';
+        $path = 'data/sample';
+        $extension = 'txt';
+
+        $file = $awsBucketPartialMock->putFileOnPath($content, $path, $extension);
+        $this->assertEquals($file, 'https://url/file.ext');
+    }
+
+    /**
+     * @covers AwsBucket\AwsBucket::putFileOnPath
+     */
+    public function testPutFileOnPathWithAcl()
+    {
+        $result = [
+            'ObjectURL' => 'https://url/file.ext',
+        ];
+
+        $sqsClientMock = Mockery::mock(S3Client::class);
+        $sqsClientMock->shouldReceive('putObject')
+            ->once()
+            ->withAnyArgs()
+            ->andReturnSelf();
+
+        $sqsClientMock->shouldReceive('toArray')
+            ->once()
+            ->withAnyArgs()
+            ->andReturn($result)
+            ->getMock();
+
+        $awsBucketPartialMock = Mockery::mock(AwsBucket::class)
+            ->makePartial();
+
+        $awsBucketPartialMock->shouldReceive('newS3Client')
+            ->once()
+            ->andReturn($sqsClientMock);
+
+        $content = 'this is your file content';
+        $path = 'data/sample';
+        $extension = 'txt';
+        $acl = 'public-read';
+
+        $file = $awsBucketPartialMock->putFileOnPath(
+            $content,
+            $path,
+            $extension,
+            $acl
+        );
+        $this->assertEquals($file, 'https://url/file.ext');
+    }
+
+    /**
      * @covers AwsBucket\AwsBucket::putFileOrigin
      */
     public function testPutFileOrigin()

@@ -43,6 +43,33 @@ class AwsBucket
     }
 
     /**
+     * PutFile into AwsBucket based on a content and path
+     * @param string $content content of file
+     * @param string $path file path
+     * @param string $extension file extension
+     * @param string $acl file acl
+     * @return string
+     */
+    public function putFileOnPath($content, $path, $extension, $acl = null)
+    {
+        $s3Client = $this->newS3Client();
+
+        $s3Config = [
+            'Bucket' => $this->s3Config['bucket'],
+            'Key' => $path . '.' . $extension,
+            'Body' => $content,
+        ];
+
+        if (!empty($acl)) {
+            $s3Config['ACL'] = $acl;
+        }
+
+        $result = $s3Client->putObject($s3Config)->toArray();
+
+        return $result['ObjectURL'];
+    }
+
+    /**
      * PutFile into AwsBucket based on uploaded file
      * @param string $oringin origin file
      * @param string $name file name
