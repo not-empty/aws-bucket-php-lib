@@ -20,20 +20,25 @@ class AwsBucket
 
     /**
      * PutFile into AwsBucket based on a content
+     * @param string $bucket bucket name
      * @param string $content content of file
      * @param string $name file name
      * @param string $extension file extension
      * @return string
      */
-    public function putFile($content, $name, $extension)
-    {
+    public function putFile(
+        string $bucket,
+        string $content,
+        string $name,
+        string $extension
+    ): string {
         $ulid = $this->newUlid();
         $hash =  $ulid->generate();
 
         $s3Client = $this->newS3Client();
 
         $result = $s3Client->putObject([
-            'Bucket' => $this->s3Config['bucket'],
+            'Bucket' => $bucket,
             'Key' => $hash . '.' . $name . '.' . $extension,
             'Body' => $content,
             'ACL' => 'public-read',
@@ -44,18 +49,24 @@ class AwsBucket
 
     /**
      * PutFile into AwsBucket based on a content and path
+     * @param string $bucket bucket name
      * @param string $content content of file
      * @param string $path file path
      * @param string $extension file extension
      * @param string $acl file acl
      * @return string
      */
-    public function putFileOnPath($content, $path, $extension, $acl = null)
-    {
+    public function putFileOnPath(
+        string $bucket,
+        string $content,
+        string $path,
+        string $extension,
+        string $acl = null
+    ): string {
         $s3Client = $this->newS3Client();
 
         $s3Config = [
-            'Bucket' => $this->s3Config['bucket'],
+            'Bucket' => $bucket,
             'Key' => $path . '.' . $extension,
             'Body' => $content,
         ];
@@ -71,20 +82,27 @@ class AwsBucket
 
     /**
      * PutFile into AwsBucket based on uploaded file
-     * @param string $oringin origin file
+     * @param string $bucket bucket name
+     * @param string $origin origin file
      * @param string $name file name
      * @param string $extension file extension
+     * @param string $contentType file content type
      * @return string
      */
-    public function putFileOrigin($origin, $name, $extension, $contentType = null)
-    {
+    public function putFileOrigin(
+        string $bucket,
+        string $origin,
+        string $name,
+        string $extension,
+        string $contentType = null
+    ): string {
         $ulid = $this->newUlid();
         $hash =  $ulid->generate();
 
         $s3Client = $this->newS3Client();
 
         $s3Config = [
-            'Bucket' => $this->s3Config['bucket'],
+            'Bucket' => $bucket,
             'Key' => $hash . '-' . $name . '.' . $extension,
             'SourceFile' => $origin,
             'ACL' => 'public-read',
@@ -101,28 +119,33 @@ class AwsBucket
 
     /**
      * List all file of AwsBucket
+     * @param string $bucket bucket name
      * @return array
      */
-    public function listFiles()
-    {
+    public function listFiles(
+        string $bucket
+    ): array {
         $s3Client = $this->newS3Client();
 
         return $s3Client->listObjects([
-            'Bucket' => $this->s3Config['bucket'],
+            'Bucket' => $bucket,
         ])->toArray();
     }
 
     /**
      * Delete files of AwsBucket
+     * @param string $bucket bucket name
      * @param string $fileName key of the file
      * @return array
      */
-    public function deleteFile(string $fileName)
-    {
+    public function deleteFile(
+        string $bucket,
+        string $fileName
+    ): array {
         $s3Client = $this->newS3Client();
 
         return $s3Client->deleteObject([
-            'Bucket' => $this->s3Config['bucket'],
+            'Bucket' => $bucket,
             'Key' => $fileName,
         ])->toArray();
     }

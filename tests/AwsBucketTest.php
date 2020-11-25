@@ -2,8 +2,10 @@
 
 namespace AwsBucket;
 
+use Aws\S3\S3Client;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Ulid\Ulid;
 
 class AwsBucketTest extends TestCase
 {
@@ -22,24 +24,35 @@ class AwsBucketTest extends TestCase
      */
     public function testPutFile()
     {
+        $bucket = 'test';
+        $content = 'this is your file content';
+        $name = 'sample';
+        $extension = 'txt';
+        $hash = '01E7110R431SMD2V7WGMSVHDVK';
+        $putObject = [
+            'Bucket' => $bucket,
+            'Key' => $hash . '.' . $name . '.' . $extension,
+            'Body' => $content,
+            'ACL' => 'public-read',
+        ];
         $result = [
             'ObjectURL' => 'https://url/file.ext',
         ];
 
         $ulidMock = Mockery::mock(Ulid::class);
         $ulidMock->shouldReceive('generate')
+            ->withNoArgs()
             ->once()
-            ->andReturn('01E7110R431SMD2V7WGMSVHDVK');
+            ->andReturn($hash);
 
         $s3ClientMock = Mockery::mock(S3Client::class);
         $s3ClientMock->shouldReceive('putObject')
             ->once()
-            ->withAnyArgs()
-            ->andReturnSelf();
-
-        $s3ClientMock->shouldReceive('toArray')
+            ->with($putObject)
+            ->andReturnSelf()
+            ->shouldReceive('toArray')
+            ->withNoArgs()
             ->once()
-            ->withAnyArgs()
             ->andReturn($result)
             ->getMock();
 
@@ -47,18 +60,21 @@ class AwsBucketTest extends TestCase
             ->makePartial();
 
         $awsBucketPartialMock->shouldReceive('newS3Client')
+            ->withNoArgs()
             ->once()
-            ->andReturn($s3ClientMock);
-
-        $awsBucketPartialMock->shouldReceive('newUlid')
+            ->andReturn($s3ClientMock)
+            ->shouldReceive('newUlid')
+            ->withNoArgs()
             ->once()
-            ->andReturn($ulidMock);
+            ->andReturn($ulidMock)
+            ->getMock();
 
-        $content = 'this is your file content';
-        $name = 'sample';
-        $extension = 'txt';
-
-        $file = $awsBucketPartialMock->putFile($content, $name, $extension);
+        $file = $awsBucketPartialMock->putFile(
+            $bucket,
+            $content,
+            $name,
+            $extension
+        );
         $this->assertEquals($file, 'https://url/file.ext');
     }
 
@@ -67,71 +83,43 @@ class AwsBucketTest extends TestCase
      */
     public function testPutFileOnPath()
     {
-        $result = [
-            'ObjectURL' => 'https://url/file.ext',
-        ];
-
-        $s3ClientMock = Mockery::mock(S3Client::class);
-        $s3ClientMock->shouldReceive('putObject')
-            ->once()
-            ->withAnyArgs()
-            ->andReturnSelf();
-
-        $s3ClientMock->shouldReceive('toArray')
-            ->once()
-            ->withAnyArgs()
-            ->andReturn($result)
-            ->getMock();
-
-        $awsBucketPartialMock = Mockery::mock(AwsBucket::class)
-            ->makePartial();
-
-        $awsBucketPartialMock->shouldReceive('newS3Client')
-            ->once()
-            ->andReturn($s3ClientMock);
-
+        $bucket = 'test';
         $content = 'this is your file content';
-        $path = 'data/sample';
-        $extension = 'txt';
-
-        $file = $awsBucketPartialMock->putFileOnPath($content, $path, $extension);
-        $this->assertEquals($file, 'https://url/file.ext');
-    }
-
-    /**
-     * @covers AwsBucket\AwsBucket::putFileOnPath
-     */
-    public function testPutFileOnPathWithAcl()
-    {
-        $result = [
-            'ObjectURL' => 'https://url/file.ext',
-        ];
-
-        $s3ClientMock = Mockery::mock(S3Client::class);
-        $s3ClientMock->shouldReceive('putObject')
-            ->once()
-            ->withAnyArgs()
-            ->andReturnSelf();
-
-        $s3ClientMock->shouldReceive('toArray')
-            ->once()
-            ->withAnyArgs()
-            ->andReturn($result)
-            ->getMock();
-
-        $awsBucketPartialMock = Mockery::mock(AwsBucket::class)
-            ->makePartial();
-
-        $awsBucketPartialMock->shouldReceive('newS3Client')
-            ->once()
-            ->andReturn($s3ClientMock);
-
-        $content = 'this is your file content';
-        $path = 'data/sample';
+        $path = 'folder_a/folder_b';
         $extension = 'txt';
         $acl = 'public-read';
+        $putObject = [
+            'Bucket' => $bucket,
+            'Key' => $path . '.' . $extension,
+            'Body' => $content,
+            'ACL' => 'public-read',
+        ];
+        $result = [
+            'ObjectURL' => 'https://url/file.ext',
+        ];
+
+        $s3ClientMock = Mockery::mock(S3Client::class);
+        $s3ClientMock->shouldReceive('putObject')
+            ->once()
+            ->with($putObject)
+            ->andReturnSelf()
+            ->shouldReceive('toArray')
+            ->withNoArgs()
+            ->once()
+            ->andReturn($result)
+            ->getMock();
+
+        $awsBucketPartialMock = Mockery::mock(AwsBucket::class)
+            ->makePartial();
+
+        $awsBucketPartialMock->shouldReceive('newS3Client')
+            ->withNoArgs()
+            ->once()
+            ->andReturn($s3ClientMock)
+            ->getMock();
 
         $file = $awsBucketPartialMock->putFileOnPath(
+            $bucket,
             $content,
             $path,
             $extension,
@@ -145,24 +133,38 @@ class AwsBucketTest extends TestCase
      */
     public function testPutFileOrigin()
     {
+        $bucket = 'test';
+        $origin = 'test.txt';
+        $content = 'this is your file content';
+        $name = 'sample';
+        $extension = 'txt';
+        $hash = '01E7110R431SMD2V7WGMSVHDVK';
+        $contentType = 'text';
+        $putObject = [
+            'Bucket' => $bucket,
+            'Key' => $hash . '-' . $name . '.' . $extension,
+            'SourceFile' => $origin,
+            'ACL' => 'public-read',
+            'ContentType' => $contentType,
+        ];
         $result = [
             'ObjectURL' => 'https://url/file.ext',
         ];
 
         $ulidMock = Mockery::mock(Ulid::class);
         $ulidMock->shouldReceive('generate')
+            ->withNoArgs()
             ->once()
-            ->andReturn('01E7110R431SMD2V7WGMSVHDVK');
+            ->andReturn($hash);
 
         $s3ClientMock = Mockery::mock(S3Client::class);
         $s3ClientMock->shouldReceive('putObject')
             ->once()
-            ->withAnyArgs()
-            ->andReturnSelf();
-
-        $s3ClientMock->shouldReceive('toArray')
+            ->with($putObject)
+            ->andReturnSelf()
+            ->shouldReceive('toArray')
+            ->withNoArgs()
             ->once()
-            ->withAnyArgs()
             ->andReturn($result)
             ->getMock();
 
@@ -170,19 +172,22 @@ class AwsBucketTest extends TestCase
             ->makePartial();
 
         $awsBucketPartialMock->shouldReceive('newS3Client')
+            ->withNoArgs()
             ->once()
-            ->andReturn($s3ClientMock);
-
-        $awsBucketPartialMock->shouldReceive('newUlid')
+            ->andReturn($s3ClientMock)
+            ->shouldReceive('newUlid')
+            ->withNoArgs()
             ->once()
-            ->andReturn($ulidMock);
+            ->andReturn($ulidMock)
+            ->getMock();
 
-        $origin = 'sample.txt';
-        $name = 'sample';
-        $extension = 'txt';
-        $contentType = 'text/plain';
-
-        $file = $awsBucketPartialMock->putFileOrigin($origin, $name, $extension, $contentType);
+        $file = $awsBucketPartialMock->putFileOrigin(
+            $bucket,
+            $origin,
+            $name,
+            $extension,
+            $contentType
+        );
         $this->assertEquals($file, 'https://url/file.ext');
     }
 
@@ -191,17 +196,20 @@ class AwsBucketTest extends TestCase
      */
     public function testListFiles()
     {
+        $bucket = 'test';
+        $listObjects = [
+            'Bucket' => $bucket,
+        ];
         $result = [];
 
         $s3ClientMock = Mockery::mock(S3Client::class);
         $s3ClientMock->shouldReceive('listObjects')
+            ->with($listObjects)
             ->once()
-            ->withAnyArgs()
-            ->andReturnSelf();
-
-        $s3ClientMock->shouldReceive('toArray')
+            ->andReturnSelf()
+            ->shouldReceive('toArray')
+            ->withNoArgs()
             ->once()
-            ->withAnyArgs()
             ->andReturn($result)
             ->getMock();
 
@@ -209,10 +217,11 @@ class AwsBucketTest extends TestCase
             ->makePartial();
 
         $awsBucketPartialMock->shouldReceive('newS3Client')
+            ->withNoArgs()
             ->once()
             ->andReturn($s3ClientMock);
 
-        $list = $awsBucketPartialMock->listFiles();
+        $list = $awsBucketPartialMock->listFiles($bucket);
         $this->assertEquals($list, []);
     }
 
@@ -221,17 +230,24 @@ class AwsBucketTest extends TestCase
      */
     public function testDeleteFile()
     {
-        $result = 'https://url/file.ext';
+        $bucket = 'test';
+        $fileName = 'file.ext';
+        $deleteObject = [
+            'Bucket' => $bucket,
+            'Key' => $fileName,
+        ];
+        $result = [
+            'ObjectURL' => 'https://url/file.ext',
+        ];
 
         $s3ClientMock = Mockery::mock(S3Client::class);
         $s3ClientMock->shouldReceive('deleteObject')
+            ->with($deleteObject)
             ->once()
-            ->withAnyArgs()
-            ->andReturnSelf();
-
-        $s3ClientMock->shouldReceive('toArray')
+            ->andReturnSelf()
+            ->shouldReceive('toArray')
+            ->withNoArgs()
             ->once()
-            ->withAnyArgs()
             ->andReturn($result)
             ->getMock();
 
@@ -239,11 +255,15 @@ class AwsBucketTest extends TestCase
             ->makePartial();
 
         $awsBucketPartialMock->shouldReceive('newS3Client')
+            ->withNoArgs()
             ->once()
             ->andReturn($s3ClientMock);
 
-        $deleted = $awsBucketPartialMock->deleteFile('file.ext');
-        $this->assertEquals($deleted, $result);
+        $delete = $awsBucketPartialMock->deleteFile(
+            $bucket,
+            $fileName
+        );
+        $this->assertEquals($result, $delete);
     }
 
     protected function tearDown(): void

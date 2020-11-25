@@ -11,18 +11,25 @@ $config = [
    ],
    'version' => 'latest',
    'region' => 'us-east-1',
-   'bucket' => '' //you must put your aws bucket here
 ];
 
 $awsBucket = new AwsBucket($config);
 
+$bucket = 'my-bucket';
 $content = 'this is your file content';
 $name = 'sample';
 $extension = 'txt';
 
-$putFile = $awsBucket->putFile($content, $name, $extension);
+$putFile = $awsBucket->putFile(
+    $bucket,
+    $content,
+    $name,
+    $extension
+);
 print_r($putFile);
 echo PHP_EOL;
 
-$listFiles = $awsBucket->listFiles();
+$listFiles = $awsBucket->listFiles(
+    $bucket
+);
 print_r($listFiles);
