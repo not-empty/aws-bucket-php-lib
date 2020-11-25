@@ -1,0 +1,7 @@
+version: '2'
+services:
+  aws-bucket-php:
+    build: ./docker/
+    container_name: aws-bucket-php
+    volumes:
+      - ./:/var/www/html
