@@ -20,6 +20,37 @@ class AwsBucketTest extends TestCase
     }
 
     /**
+     * @covers AwsBucket\AwsBucket::fileExists
+     */
+    public function testFileExists()
+    {
+        $bucket = 'test';
+        $path = 'folder/sample.txt';
+
+        $s3ClientMock = Mockery::mock(S3Client::class);
+        $s3ClientMock->shouldReceive('doesObjectExist')
+            ->once()
+            ->with($bucket, $path)
+            ->andReturn(true)
+            ->getMock();
+
+        $awsBucketPartialMock = Mockery::mock(AwsBucket::class)
+            ->makePartial();
+
+        $awsBucketPartialMock->shouldReceive('newS3Client')
+            ->withNoArgs()
+            ->once()
+            ->andReturn($s3ClientMock)
+            ->getMock();
+
+        $result = $awsBucketPartialMock->fileExists(
+            $bucket,
+            $path
+        );
+        $this->assertEquals(true, $result);
+    }
+
+    /**
      * @covers AwsBucket\AwsBucket::putFile
      */
     public function testPutFile()

@@ -19,6 +19,24 @@ class AwsBucket
     }
 
     /**
+     * Check whether file exists in bucket or not.
+     * @param string $bucket bucket name
+     * @param string $path file path in bucket
+     * @return bool
+     */
+    public function fileExists(
+        string $bucket,
+        string $path
+    ): bool {
+        $s3Client = $this->newS3Client();
+        
+        return $s3Client->doesObjectExist(
+            $bucket,
+            $path
+        );
+    }
+
+    /**
      * PutFile into AwsBucket based on a content
      * @param string $bucket bucket name
      * @param string $content content of file
