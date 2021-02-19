@@ -228,8 +228,10 @@ class AwsBucketTest extends TestCase
     public function testListFiles()
     {
         $bucket = 'test';
+        $prefix = '';
         $listObjects = [
             'Bucket' => $bucket,
+            'Prefix' => $prefix,
         ];
         $result = [];
 
@@ -253,6 +255,42 @@ class AwsBucketTest extends TestCase
             ->andReturn($s3ClientMock);
 
         $list = $awsBucketPartialMock->listFiles($bucket);
+        $this->assertEquals($list, []);
+    }
+
+    /**
+     * @covers AwsBucket\AwsBucket::listFiles
+     */
+    public function testListFilesWithPrefix()
+    {
+        $bucket = 'test';
+        $prefix = 'test';
+        $listObjects = [
+            'Bucket' => $bucket,
+            'Prefix' => $prefix,
+        ];
+        $result = [];
+
+        $s3ClientMock = Mockery::mock(S3Client::class);
+        $s3ClientMock->shouldReceive('listObjects')
+            ->with($listObjects)
+            ->once()
+            ->andReturnSelf()
+            ->shouldReceive('toArray')
+            ->withNoArgs()
+            ->once()
+            ->andReturn($result)
+            ->getMock();
+
+        $awsBucketPartialMock = Mockery::mock(AwsBucket::class)
+            ->makePartial();
+
+        $awsBucketPartialMock->shouldReceive('newS3Client')
+            ->withNoArgs()
+            ->once()
+            ->andReturn($s3ClientMock);
+
+        $list = $awsBucketPartialMock->listFiles($bucket, $prefix);
         $this->assertEquals($list, []);
     }
 

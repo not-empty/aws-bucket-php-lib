@@ -138,15 +138,18 @@ class AwsBucket
     /**
      * List all file of AwsBucket
      * @param string $bucket bucket name
+     * @param string $prefix bucket prefix to access a specific folder
      * @return array
      */
     public function listFiles(
-        string $bucket
+        string $bucket,
+        string $prefix = ''
     ): array {
         $s3Client = $this->newS3Client();
 
         return $s3Client->listObjects([
             'Bucket' => $bucket,
+            'Prefix' => $prefix,
         ])->toArray();
     }
 
