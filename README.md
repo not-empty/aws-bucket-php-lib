@@ -27,12 +27,12 @@ it's a good idea to look in the sample folder to understand how it works.
 First you need to building a correct environment to install dependences
 
 ```sh
-docker build -t kiwfy/AwsBucketSample -f contrib/Dockerfile .
+docker build -t kiwfy/aws-bucket-php -f contrib/Dockerfile .
 ```
 
 Access the container
 ```sh
-docker run -v ${PWD}/:/var/www/html -it kiwfy/AwsBucketSample bash
+docker run -v ${PWD}/:/var/www/html -it kiwfy/aws-bucket-php bash
 ```
 
 Verify if all dependencies is installed (if need anyelse)
