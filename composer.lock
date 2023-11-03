@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "950cdc8cbb78568adfecb8d57a44a419",
+    "content-hash": "9182ae5f3f552f33786ac648f906ed1e",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -548,20 +548,20 @@
         },
         {
             "name": "not-empty/ulid-php-lib",
-            "version": "5.0.0",
+            "version": "6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/not-empty/ulid-php-lib.git",
-                "reference": "a351998eef51a9dfbd831fe26611a5ea8bbc7528"
+                "reference": "0a3e5314211910f14a1a0fabc68b5001dcc6d07c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/not-empty/ulid-php-lib/zipball/a351998eef51a9dfbd831fe26611a5ea8bbc7528",
-                "reference": "a351998eef51a9dfbd831fe26611a5ea8bbc7528",
+                "url": "https://api.github.com/repos/not-empty/ulid-php-lib/zipball/0a3e5314211910f14a1a0fabc68b5001dcc6d07c",
+                "reference": "0a3e5314211910f14a1a0fabc68b5001dcc6d07c",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.1"
+                "php": "^8.2"
             },
             "require-dev": {
                 "mockery/mockery": "^1.6",
@@ -588,9 +588,9 @@
             "description": "PHP Universally Unique Lexicographically Sortable Identifier (ULID)",
             "support": {
                 "issues": "https://github.com/not-empty/ulid-php-lib/issues",
-                "source": "https://github.com/not-empty/ulid-php-lib/tree/5.0.0"
+                "source": "https://github.com/not-empty/ulid-php-lib/tree/6.0.0"
             },
-            "time": "2023-10-25T19:34:14+00:00"
+            "time": "2023-10-25T19:59:05+00:00"
         },
         {
             "name": "psr/http-client",
@@ -3724,7 +3724,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.1"
+        "php": "^8.2"
     },
     "platform-dev": [],
     "plugin-api-version": "2.6.0"
