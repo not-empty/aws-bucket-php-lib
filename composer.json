@@ -1,19 +1,13 @@
 {
     "name": "not-empty/aws-bucket-php-lib",
     "description": "PHP library to connect to and use AWS S3 Bucket",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "type": "library",
     "license": "GPL-3.0-only",
     "require": {
-        "php": "^7.1",
-        "aws/aws-sdk-php": "^3.278",
-        "not-empty/ulid-php-lib": "^1.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^7.5",
-        "mockery/mockery": "^1.3",
-        "squizlabs/php_codesniffer": "^3.7",
-        "phpmd/phpmd": "^2.14"
+        "php": "^7.2",
+        "not-empty/ulid-php-lib": "^2.0",
+        "aws/aws-sdk-php": "^3.284"
     },
     "authors": [
         {
@@ -49,5 +43,11 @@
         "cs": "vendor/bin/phpcs",
         "test": "phpdbg -qrr vendor/bin/phpunit --configuration phpunit.xml -d memory_limit=1024M",
         "ccu" : "php contrib/coverage-checker.php coverage/coverage.xml 100"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.5",
+        "mockery/mockery": "^1.3",
+        "squizlabs/php_codesniffer": "^3.7",
+        "phpmd/phpmd": "^2.14"
     }
 }
