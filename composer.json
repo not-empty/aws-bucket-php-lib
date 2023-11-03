@@ -1,13 +1,13 @@
 {
     "name": "not-empty/aws-bucket-php-lib",
     "description": "PHP library to connect to and use AWS S3 Bucket",
-    "version": "3.0.0",
+    "version": "4.0.0",
     "type": "library",
     "license": "GPL-3.0-only",
     "require": {
-        "php": "^7.3",
-        "not-empty/ulid-php-lib": "^3.0",
-        "aws/aws-sdk-php": "^3.284"
+        "php": "^7.4",
+        "aws/aws-sdk-php": "^3.284",
+        "not-empty/ulid-php-lib": "^4.0"
     },
     "authors": [
         {
