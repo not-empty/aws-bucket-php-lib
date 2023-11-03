@@ -42,10 +42,10 @@ $config = [
        'secret' => '', //you must put your aws iam secret here
    ],
    'version' => 'latest',
-   'region' => 'us-east-1',
+   'region' => 'us-east-1', //you must put your bucket region here
 ];
 $awsBucket = new AwsBucket($config);
-$bucket = 'my-bucket';
+$bucket = 'my-bucket'; //you must put your bucket name here
 $content = 'this is your file content';
 $name = 'sample';
 $extension = 'txt';
