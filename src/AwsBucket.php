@@ -79,7 +79,7 @@ class AwsBucket
         string $content,
         string $path,
         string $extension,
-        string $acl = null
+        ?string $acl = null
     ): string {
         $s3Client = $this->newS3Client();
 
@@ -112,7 +112,7 @@ class AwsBucket
         string $origin,
         string $name,
         string $extension,
-        string $contentType = null
+        ?string $contentType = null
     ): string {
         $ulid = $this->newUlid();
         $hash =  $ulid->generate();
